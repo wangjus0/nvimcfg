@@ -34,7 +34,9 @@ require("lazy").setup({
 		---@module 'blink.cmp'
 		---@type blink.cmp.Config
 		opts = {
-			keymap = { preset = "default" },
+			keymap = {
+				preset = "enter",
+			},
 
 			appearance = {
 				nerd_font_variant = "mono",
@@ -111,7 +113,7 @@ require("lazy").setup({
 		end,
 	},
 
-	-- To jump to a work ('s' first couple letters)
+	-- Flash.nvim (To jump to a work ('s' first couple letters))
 	{
 		"folke/flash.nvim",
 		event = "VeryLazy",
@@ -125,7 +127,6 @@ require("lazy").setup({
 					require("flash").jump()
 				end,
 				desc = "Flash jump",
-				nowait = true,
 			},
 		},
 	},
@@ -182,5 +183,19 @@ require("lazy").setup({
 				},
 			})
 		end,
+	},
+
+	-- Live Server
+	{
+		"barrett-ruth/live-server.nvim",
+		build = "pnpm add -g live-server",
+		cmd = { "LiveServerStart", "LiveServerStop" },
+		config = true,
+	},
+
+	{
+		"akinsho/git-conflict.nvim",
+		version = "*",
+		config = true,
 	},
 })
