@@ -360,6 +360,13 @@ require("lazy").setup({
     keys = {
       { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
     },
+  },
 
+  {
+    "karb94/neoscroll.nvim",
+    opts = {
+      easing = "quadratic",
+    },
   }
+
 })
