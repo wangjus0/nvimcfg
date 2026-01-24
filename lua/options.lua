@@ -28,3 +28,9 @@ vim.o.timeoutlen = 400
 
 -- No change in cursor
 vim.opt.guicursor = ""
+
+-- Auto update buffer (for codex)
+vim.opt.autoread = true
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter" }, {
+	command = "checktime",
+})
