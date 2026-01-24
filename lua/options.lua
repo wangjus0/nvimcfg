@@ -4,6 +4,10 @@
 vim.opt.wrap = true
 vim.opt.breakindent = true
 
+-- Auto indentation
+vim.opt.autoindent = true
+vim.opt.smartindent = true
+
 -- Tab size
 vim.opt.tabstop = 2
 
