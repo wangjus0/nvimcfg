@@ -54,15 +54,6 @@ require("lazy").setup({
 		opts_extend = { "sources.default" },
 	},
 
-	-- Easy word surrounds
-	{
-		"echasnovski/mini.surround",
-		version = "*", -- recommended to avoid breaking changes
-		config = function()
-			require("mini.surround").setup()
-		end,
-	},
-
 	-- Buffer oil tree
 	{
 		"stevearc/oil.nvim",
@@ -114,13 +105,6 @@ require("lazy").setup({
 				end,
 			})
 		end,
-	},
-
-	-- Auto brackets
-	{
-		"windwp/nvim-autopairs",
-		event = "InsertEnter",
-		config = true,
 	},
 
 	-- Save files to a buffer storage to jump to
@@ -514,7 +498,9 @@ require("lazy").setup({
 	{
 		"numToStr/Comment.nvim",
 		opts = {
-			-- add any options here
+			toggler = {
+				block = "gbc",
+			},
 		},
 	},
 
@@ -543,5 +529,14 @@ require("lazy").setup({
 			{ "<c-l>", "<cmd><C-U>TmuxNavigateRight<cr>" },
 			{ "<c-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>" },
 		},
+	},
+
+	-- Mini.nvim (small independent plugins/modules)
+	{
+		"echasnovski/mini.nvim",
+		config = function()
+			require("mini.surround").setup()
+			require("mini.pairs").setup()
+		end,
 	},
 })
