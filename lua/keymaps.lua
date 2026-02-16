@@ -38,35 +38,6 @@ vim.keymap.set("n", "<leader>e", function()
 	require("oil").open(vim.fn.expand("%:p:h"))
 end, { desc = "Open Oil (current file dir)" })
 
--- Harpoon
-local harpoon = require("harpoon")
-
-harpoon:setup()
-
-vim.keymap.set("n", "<leader>a", function()
-	harpoon:list():add()
-end)
-
-vim.keymap.set("n", "<leader>h", function()
-	harpoon.ui:toggle_quick_menu(harpoon:list())
-end)
-
-vim.keymap.set("n", "th", function()
-	harpoon:list():select(1)
-end)
-vim.keymap.set("n", "tj", function()
-	harpoon:list():select(2)
-end)
-vim.keymap.set("n", "tk", function()
-	harpoon:list():select(3)
-end)
-vim.keymap.set("n", "tl", function()
-	harpoon:list():select(4)
-end)
-vim.keymap.set("n", "t;", function()
-	harpoon:list():select(5)
-end)
-
 -- Telescope
 vim.keymap.set("n", "<leader>pf", require("telescope.builtin").find_files, { -- Find files
 	desc = "[F]ind [F]iles",
@@ -79,3 +50,10 @@ vim.keymap.set("n", "<leader>pw", require("telescope.builtin").live_grep, { -- S
 vim.keymap.set("n", "<leader>gd", require("telescope.builtin").lsp_type_definitions, {
 	desc = "[G]o [D]efintiion",
 })
+
+-- Barbar
+vim.keymap.set("n", "th", "<Cmd>BufferGoto 1<CR>", { desc = "Go to tab 1" })
+vim.keymap.set("n", "tj", "<Cmd>BufferGoto 2<CR>", { desc = "Go to tab 2" })
+vim.keymap.set("n", "tk", "<Cmd>BufferGoto 3<CR>", { desc = "Go to tab 3" })
+vim.keymap.set("n", "tl", "<Cmd>BufferGoto 4<CR>", { desc = "Go to tab 4" })
+vim.keymap.set("n", "t;", "<Cmd>BufferGoto 5<CR>", { desc = "Go to tab 5" })

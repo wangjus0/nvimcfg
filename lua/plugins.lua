@@ -165,13 +165,6 @@ require("lazy").setup({
 		end,
 	},
 
-	-- Harpoon
-	{
-		"ThePrimeagen/harpoon",
-		branch = "harpoon2",
-		dependencies = { "nvim-lua/plenary.nvim" },
-	},
-
 	-- Telescope
 	{
 		"nvim-telescope/telescope.nvim",
@@ -506,23 +499,29 @@ require("lazy").setup({
 	},
 
 	{
-		"kdheepak/lazygit.nvim",
-		lazy = true,
-		cmd = {
-			"LazyGit",
-			"LazyGitConfig",
-			"LazyGitCurrentFile",
-			"LazyGitFilter",
-			"LazyGitFilterCurrentFile",
+		"romgrk/barbar.nvim",
+		init = function()
+			vim.g.barbar_auto_setup = false
+		end,
+		opts = {
+			icons = {
+				buffer_index = false,
+				buffer_number = false,
+				button = false,
+				diagnostics = {
+					[vim.diagnostic.severity.ERROR] = { enabled = false },
+					[vim.diagnostic.severity.WARN] = { enabled = false },
+					[vim.diagnostic.severity.INFO] = { enabled = false },
+					[vim.diagnostic.severity.HINT] = { enabled = false },
+				},
+				filetype = {
+					enabled = false,
+				},
+				separator = { left = "", right = "" },
+				modified = { button = "" },
+				pinned = { button = "" },
+			},
 		},
-		-- optional for floating window border decoration
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-		},
-		-- setting the keybinding for LazyGit with 'keys' is recommended in
-		-- order to load the plugin when the command is run for the first time
-		keys = {
-			{ "<leader>lg", "<cmd>LazyGit<cr>", desc = "LazyGit" },
-		},
+		version = "^1.0.0",
 	},
 })
