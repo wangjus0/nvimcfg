@@ -53,11 +53,11 @@ require("lazy").setup({
 		end,
 	},
 
-	-- Mason LSP
 	{
 		"williamboman/mason-lspconfig.nvim",
 		config = function()
 			require("mason-lspconfig").setup({
+				automatic_enable = false,
 				ensure_installed = {
 					"clangd",
 					"html",
@@ -71,43 +71,21 @@ require("lazy").setup({
 		end,
 	},
 
-	-- LSP Config
 	{
 		"neovim/nvim-lspconfig",
 		config = function()
 			local capabilities = require("blink.cmp").get_lsp_capabilities()
-
-			vim.lsp.config.lua_ls = {
+			vim.lsp.config("*", {
 				capabilities = capabilities,
-			}
-
-			vim.lsp.config.gopls = {
-				capabilities = capabilities,
-			}
-
-			vim.lsp.config.tsserver = {
-				capabilities = capabilities,
-			}
-
-			vim.lsp.config.pyright = {
-				capabilities = capabilities,
-			}
-
-			vim.lsp.config.clangd = {
-				capabilities = capabilities,
-			}
-
-			vim.lsp.config.html = {
-				capabilities = capabilities,
-			}
-
+			})
 			vim.lsp.enable({
 				"lua_ls",
 				"gopls",
-				"tsserver",
+				"ts_ls",
 				"pyright",
 				"clangd",
 				"html",
+				"tailwindcss",
 			})
 		end,
 	},
@@ -165,112 +143,33 @@ require("lazy").setup({
 		end,
 	},
 
-	-- Telescope
+	-- Fzf Lua
 	{
-		"nvim-telescope/telescope.nvim",
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-			"nvim-telescope/telescope-ui-select.nvim",
-			"LinArcX/telescope-env.nvim",
-		},
-		opts = function(_, opts)
-			local themes = require("telescope.themes")
+		"ibhagwan/fzf-lua",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		config = function()
+			local fzf = require("fzf-lua")
 
-			opts.defaults = vim.tbl_deep_extend("force", opts.defaults or {}, {
-
-				file_ignore_patterns = {
-					"%.git/",
-					"node_modules/",
-					"%.lock",
-					"%.cache/",
+			fzf.setup({
+				"fzf-vim",
+				files = {
+					find_opts = [[--type f --hidden --exclude .git --exclude node_modules --exclude .venv]],
 				},
-
-				prompt_prefix = "   ",
-				selection_caret = "  ",
-				entry_prefix = "  ",
-
-				sorting_strategy = "ascending",
-				layout_strategy = "horizontal",
-
-				layout_config = {
-					prompt_position = "top",
-					width = 0.9,
-					height = 0.85,
-					preview_cutoff = 40,
+				grep = {
+					rg_opts = [[--color=always --hidden --smart-case --glob '!.git/*' --glob '!node_modules/*' --glob '!.venv/*']],
 				},
-
-				preview = {
-					treesitter = true,
-				},
-
-				winblend = 0,
-				color_devicons = true,
-				path_display = { "smart" },
-
-				border = true,
-				borderchars = {
-					"─",
-					"│",
-					"─",
-					"│",
-					"╭",
-					"╮",
-					"╯",
-					"╰",
-				},
-
-				mappings = {
-					i = {
-						["<C-j>"] = "move_selection_next",
-						["<C-k>"] = "move_selection_previous",
-						["<C-q>"] = "send_to_qflist",
-						["<Esc>"] = "close",
-					},
-					n = {
-						["q"] = "close",
-					},
-				},
+				file_ignore_patterns = { ".git/", "node_modules/", ".venv/", "__pycache__/" },
 			})
 
-			opts.pickers = vim.tbl_deep_extend("force", opts.pickers or {}, {
-				find_files = {
-					hidden = true,
-				},
-				buffers = {
-					sort_lastused = true,
-					previewer = false,
-				},
-				live_grep = {
-					only_sort_text = true,
-				},
-				diagnostics = {
-					theme = "ivy",
-				},
-			})
+			-- Keymaps
+			vim.keymap.set("n", "<leader>pf", fzf.files, { desc = "[F]ind [F]iles" })
 
-			opts.extensions = vim.tbl_deep_extend("force", opts.extensions or {}, {
-				["ui-select"] = themes.get_dropdown({
-					previewer = false,
-					winblend = 0,
-					borderchars = {
-						"─",
-						"│",
-						"─",
-						"│",
-						"╭",
-						"╮",
-						"╯",
-						"╰",
-					},
-				}),
-				env = {},
-			})
-		end,
-		config = function(_, opts)
-			local telescope = require("telescope")
-			telescope.setup(opts)
-			telescope.load_extension("ui-select")
-			telescope.load_extension("env")
+			vim.keymap.set("n", "<leader>pw", fzf.live_grep_native, { desc = "[F]ind [W]ord" })
+
+			vim.keymap.set("n", "<leader>fb", fzf.git_branches, { desc = "[F]ind by Git [B]ranches" })
+			vim.keymap.set("n", "<leader>fd", fzf.diagnostics_document, { desc = "[F]ind by Git [B]ranches" })
+			vim.keymap.set("n", "gd", fzf.lsp_definitions, { desc = "[G]oto [D]efinition" })
+			vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "LSP Hover Documentation" })
 		end,
 	},
 
@@ -315,51 +214,6 @@ require("lazy").setup({
 		},
 	},
 
-	-- Comfy Numbers (for easy vertical num nav)
-	{
-		"mluders/comfy-line-numbers.nvim",
-		config = function()
-			require("comfy-line-numbers").setup({
-				labels = {
-					"1",
-					"2",
-					"3",
-					"4",
-					"5",
-					"11",
-					"12",
-					"13",
-					"14",
-					"15",
-					"21",
-					"22",
-					"23",
-					"24",
-					"25",
-					"31",
-					"32",
-					"33",
-					"34",
-					"35",
-					"41",
-					"42",
-					"43",
-					"44",
-					"45",
-					"51",
-					"52",
-					"53",
-					"54",
-					"55",
-				},
-				up_key = "k",
-				down_key = "j",
-				hidden_file_types = { "undotree" },
-				hidden_buffer_types = { "terminal", "nofile" },
-			})
-		end,
-	},
-
 	-- Comment.nvim (gcc, gco, etc)
 	{
 		"numToStr/Comment.nvim",
@@ -401,127 +255,121 @@ require("lazy").setup({
 
 	-- Color Scheme
 	{
-		"vague-theme/vague.nvim",
-		lazy = false, -- make sure we load this during startup if it is your main colorscheme
-		priority = 1000, -- make sure to load this before all the other plugins
-		config = function()
-			-- NOTE: you do not need to call setup if you don't want to.
-			require("vague").setup({
-				transparent = false, -- don't set background
-				-- disable bold/italic globally in `style`
-				bold = true,
-				italic = true,
-				style = {
-					-- "none" is the same thing as default. But "italic" and "bold" are also valid options
-					boolean = "bold",
-					number = "none",
-					float = "none",
-					error = "bold",
-					comments = "italic",
-					conditionals = "none",
-					functions = "none",
-					headings = "bold",
-					operators = "none",
-					strings = "italic",
-					variables = "none",
+		"folke/tokyonight.nvim",
+		priority = 1000, -- load before other UI plugins
+		opts = {
+			style = "moon", -- storm | night | day | moon
+			transparent = false,
+			terminal_colors = true,
 
-					-- keywords
-					keywords = "none",
-					keyword_return = "italic",
-					keywords_loop = "none",
-					keywords_label = "none",
-					keywords_exception = "none",
+			styles = {
+				comments = { italic = true },
+				keywords = { italic = true },
+				functions = {},
+				variables = {},
+				sidebars = "dark", -- dark | transparent | normal
+				floats = "dark",
+			},
 
-					-- builtin
-					builtin_constants = "bold",
-					builtin_functions = "none",
-					builtin_types = "bold",
-					builtin_variables = "none",
-				},
-				-- plugin styles where applicable
-				-- make an issue/pr if you'd like to see more styling options!
-				plugins = {
-					cmp = {
-						match = "bold",
-						match_fuzzy = "bold",
-					},
-					dashboard = {
-						footer = "italic",
-					},
-					lsp = {
-						diagnostic_error = "bold",
-						diagnostic_hint = "none",
-						diagnostic_info = "italic",
-						diagnostic_ok = "none",
-						diagnostic_warn = "bold",
-					},
-					neotest = {
-						focused = "bold",
-						adapter_name = "bold",
-					},
-					telescope = {
-						match = "bold",
-					},
-				},
+			sidebars = { "qf", "help", "neo-tree", "terminal", "lazy" },
+			day_brightness = 0.3,
 
-				-- Override highlights or add new highlights
-				on_highlights = function(highlights, colors) end,
-
-				-- Override colors
-				colors = {
-					bg = "#141415",
-					inactiveBg = "#1c1c24",
-					fg = "#cdcdcd",
-					floatBorder = "#878787",
-					line = "#252530",
-					comment = "#606079",
-					builtin = "#b4d4cf",
-					func = "#c48282",
-					string = "#e8b589",
-					number = "#e0a363",
-					property = "#c3c3d5",
-					constant = "#aeaed1",
-					parameter = "#bb9dbd",
-					visual = "#333738",
-					error = "#d8647e",
-					warning = "#f3be7c",
-					hint = "#7e98e8",
-					operator = "#90a0b5",
-					keyword = "#6e94b2",
-					type = "#9bb4bc",
-					search = "#405065",
-					plus = "#7fa563",
-					delta = "#f3be7c",
-				},
-			})
-			vim.cmd("colorscheme vague")
+			dim_inactive = false,
+			lualine_bold = true,
+		},
+		config = function(_, opts)
+			require("tokyonight").setup(opts)
+			vim.cmd.colorscheme("tokyonight")
 		end,
 	},
 
+	-- Harpoon
 	{
-		"romgrk/barbar.nvim",
-		init = function()
-			vim.g.barbar_auto_setup = false
-		end,
+		"ThePrimeagen/harpoon",
+		branch = "harpoon2",
+		dependencies = { "nvim-lua/plenary.nvim" },
+	},
+
+	-- File tree
+	{
+		"nvim-neo-tree/neo-tree.nvim",
+		branch = "v3.x",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"MunifTanjim/nui.nvim",
+		},
+		lazy = false, -- neo-tree will lazily load itself
+	},
+
+	-- Lualine
+	{
+		"nvim-lualine/lualine.nvim",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
 		opts = {
-			icons = {
-				buffer_index = false,
-				buffer_number = false,
-				button = false,
-				diagnostics = {
-					[vim.diagnostic.severity.ERROR] = { enabled = false },
-					[vim.diagnostic.severity.WARN] = { enabled = false },
-					[vim.diagnostic.severity.INFO] = { enabled = false },
-					[vim.diagnostic.severity.HINT] = { enabled = false },
+			options = {
+				theme = "auto",
+				globalstatus = true, -- single statusline
+				section_separators = { left = "", right = "" },
+				component_separators = { left = "", right = "" },
+				disabled_filetypes = { "dashboard", "alpha" },
+			},
+
+			sections = {
+				lualine_a = {
+					{
+						"mode",
+					},
 				},
-				filetype = {
-					enabled = false,
+
+				lualine_b = {
+					{
+						"filename",
+						path = 1, -- relative path
+						symbols = {
+							modified = " ●",
+							readonly = " ",
+							unnamed = "[No Name]",
+						},
+					},
 				},
-				separator = { left = "", right = "" },
-				modified = { button = "" },
-				pinned = { button = "" },
+
+				lualine_c = {},
+
+				lualine_x = {
+					{
+						"diagnostics",
+						symbols = {
+							error = " ",
+							warn = " ",
+							info = " ",
+							hint = "󰌵 ",
+						},
+					},
+				},
+
+				lualine_y = {
+					{
+						"branch",
+						icon = "",
+					},
+				},
+
+				lualine_z = {
+					{
+						"location",
+						icon = "󰍒",
+					},
+				},
 			},
 		},
-		version = "^1.0.0",
+	},
+
+	-- Git diff viewer
+	{
+		"sindrets/diffview.nvim",
+		dependencies = { "nvim-lua/plenary.nvim" },
+		config = function()
+			require("diffview").setup({})
+		end,
 	},
 })
