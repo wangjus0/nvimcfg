@@ -66,6 +66,7 @@ require("lazy").setup({
 					"ts_ls",
 					"pyright",
 					"tailwindcss",
+					"jdtls",
 				},
 			})
 		end,
@@ -86,6 +87,7 @@ require("lazy").setup({
 				"clangd",
 				"html",
 				"tailwindcss",
+				"jdtls",
 			})
 		end,
 	},
@@ -255,34 +257,19 @@ require("lazy").setup({
 
 	-- Color Scheme
 	{
-		"folke/tokyonight.nvim",
-		priority = 1000, -- load before other UI plugins
-		opts = {
-			style = "moon", -- storm | night | day | moon
-			transparent = false,
-			terminal_colors = true,
+		"Mofiqul/vscode.nvim",
+		priority = 1000,
+		config = function()
+			require("vscode").setup({
+				style = "dark", -- dark | light
+				transparent = false,
+				italic_comments = true,
+				disable_nvimtree_bg = true,
+			})
 
-			styles = {
-				comments = { italic = true },
-				keywords = { italic = true },
-				functions = {},
-				variables = {},
-				sidebars = "dark", -- dark | transparent | normal
-				floats = "dark",
-			},
-
-			sidebars = { "qf", "help", "neo-tree", "terminal", "lazy" },
-			day_brightness = 0.3,
-
-			dim_inactive = false,
-			lualine_bold = true,
-		},
-		config = function(_, opts)
-			require("tokyonight").setup(opts)
-			vim.cmd.colorscheme("tokyonight")
+			vim.cmd.colorscheme("vscode")
 		end,
 	},
-
 	-- Harpoon
 	{
 		"ThePrimeagen/harpoon",
@@ -301,75 +288,40 @@ require("lazy").setup({
 		lazy = false, -- neo-tree will lazily load itself
 	},
 
-	-- Lualine
-	{
-		"nvim-lualine/lualine.nvim",
-		dependencies = { "nvim-tree/nvim-web-devicons" },
-		opts = {
-			options = {
-				theme = "auto",
-				globalstatus = true, -- single statusline
-				section_separators = { left = "", right = "" },
-				component_separators = { left = "", right = "" },
-				disabled_filetypes = { "dashboard", "alpha" },
-			},
-
-			sections = {
-				lualine_a = {
-					{
-						"mode",
-					},
-				},
-
-				lualine_b = {
-					{
-						"filename",
-						path = 1, -- relative path
-						symbols = {
-							modified = " ●",
-							readonly = " ",
-							unnamed = "[No Name]",
-						},
-					},
-				},
-
-				lualine_c = {},
-
-				lualine_x = {
-					{
-						"diagnostics",
-						symbols = {
-							error = " ",
-							warn = " ",
-							info = " ",
-							hint = "󰌵 ",
-						},
-					},
-				},
-
-				lualine_y = {
-					{
-						"branch",
-						icon = "",
-					},
-				},
-
-				lualine_z = {
-					{
-						"location",
-						icon = "󰍒",
-					},
-				},
-			},
-		},
-	},
-
 	-- Git diff viewer
 	{
 		"sindrets/diffview.nvim",
 		dependencies = { "nvim-lua/plenary.nvim" },
 		config = function()
 			require("diffview").setup({})
+		end,
+	},
+
+	-- Statusline
+	{
+		"ojroques/nvim-hardline",
+		config = function()
+			require("hardline").setup({
+				bufferline = false, -- disable bufferline
+				bufferline_settings = {
+					exclude_terminal = false, -- don't show terminal buffers in bufferline
+					show_index = false, -- show buffer indexes (not the actual buffer numbers) in bufferline
+				},
+				theme = "nordic", -- change theme
+				sections = { -- define sections
+					{ class = "mode", item = require("hardline.parts.mode").get_item },
+					{ class = "high", item = require("hardline.parts.git").get_item, hide = 100 },
+					{ class = "med", item = require("hardline.parts.filename").get_item },
+					"%<",
+					{ class = "med", item = "%=" },
+					{ class = "low", item = require("hardline.parts.wordcount").get_item, hide = 100 },
+					{ class = "error", item = require("hardline.parts.lsp").get_error },
+					{ class = "warning", item = require("hardline.parts.lsp").get_warning },
+					{ class = "warning", item = require("hardline.parts.whitespace").get_item },
+					{ class = "high", item = require("hardline.parts.filetype").get_item, hide = 60 },
+					-- { class = "mode", item = require("hardline.parts.line").get_item },
+				},
+			})
 		end,
 	},
 })
